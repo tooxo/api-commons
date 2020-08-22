@@ -1,0 +1,16 @@
+class InvalidUrlError(RuntimeError):
+    """
+    Raised when a given url was invalid
+    """
+
+
+class IncompleteObjectError(RuntimeError):
+    """
+    Raised when too less data is given to complete the object
+    """
+
+
+class RegexMatchError(RuntimeError):
+    """
+    Raised, when a regex doesn't match
+    """
