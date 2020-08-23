@@ -36,10 +36,12 @@ class Image:
         parsed_api_response: dict = json.loads(api_response)
         return cls(
             url=parsed_api_response["url"],
-            height=parsed_api_response[
-                "height"] if "height" in parsed_api_response else None,
-            width=parsed_api_response[
-                "width"] if "width" in parsed_api_response else None,
+            height=parsed_api_response["height"]
+            if "height" in parsed_api_response
+            else None,
+            width=parsed_api_response["width"]
+            if "width" in parsed_api_response
+            else None,
         )
 
 
@@ -52,8 +54,7 @@ class Copyright:
     def from_api_response(cls, api_response: str):
         parsed_api_response: dict = json.loads(api_response)
         return cls(
-            text=parsed_api_response["text"],
-            type=parsed_api_response["type"]
+            text=parsed_api_response["text"], type=parsed_api_response["type"]
         )
 
 
@@ -71,17 +72,22 @@ class User:
     def from_api_response(cls, api_response: str):
         parsed_api_response: dict = json.loads(api_response)
         return cls(
-            display_name=parsed_api_response[
-                "display_name"] if "display_name" in parsed_api_response else
-            None,
+            display_name=parsed_api_response["display_name"]
+            if "display_name" in parsed_api_response
+            else None,
             external_urls=ExternalUrls.from_api_response(
-                json.dumps(parsed_api_response["external_urls"])),
-            followers=parsed_api_response["followers"][
-                "total"] if "followers" in parsed_api_response else None,
+                json.dumps(parsed_api_response["external_urls"])
+            ),
+            followers=parsed_api_response["followers"]["total"]
+            if "followers" in parsed_api_response
+            else None,
             endpoint=parsed_api_response["href"],
             id=parsed_api_response["id"],
-            images=[Image.from_api_response(json.dumps(x)) for x in
-                    parsed_api_response[
-                        "images"]] if "images" in parsed_api_response else None,
-            uri=parsed_api_response["uri"]
+            images=[
+                Image.from_api_response(json.dumps(x))
+                for x in parsed_api_response["images"]
+            ]
+            if "images" in parsed_api_response
+            else None,
+            uri=parsed_api_response["uri"],
         )

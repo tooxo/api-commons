@@ -14,3 +14,10 @@ class RegexMatchError(RuntimeError):
     """
     Raised, when a regex doesn't match
     """
+
+
+class AsynchronousLibrariesNotFoundException(Exception):
+    """
+    Raised when an asynchronous exception is called while not having the
+    dependencies installed
+    """

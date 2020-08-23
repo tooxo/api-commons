@@ -3,6 +3,7 @@
 Wrappers for multiple APIs compiled into one Python package.
 All parts of the program are usable synchronous as well as asynchronous with the *asyncio* python package. 
 
+The library is also fully usable without any requirements, as long as it is used in synchronous mode only.
 ### Services included
 
 * Spotify

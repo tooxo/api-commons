@@ -48,6 +48,7 @@ class InvalidSpotifyUrlError(InvalidUrlError):
     """
     Raised, when a given spotify url was invalid
     """
+
     pass
 
 
