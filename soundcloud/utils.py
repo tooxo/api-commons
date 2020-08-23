@@ -116,7 +116,6 @@ def fulfill_missing_requests(missing_ids: List[str], token: str) -> List[dict]:
                     url=URL_MISSING.format(
                         urllib.parse.quote(",").join(ids), token
                     ),
-                    # extra_headers=COMMON_HEADERS
                 )
             )
         )
@@ -136,7 +135,6 @@ async def fulfill_missing_requests_async(
                     url=URL_MISSING.format(
                         urllib.parse.quote(",").join(ids), token
                     ),
-                    # extra_headers=COMMON_HEADERS
                 )
             )
         )
