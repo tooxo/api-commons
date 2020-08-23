@@ -1,0 +1,31 @@
+# tooxo / api-commons
+
+Wrappers for multiple APIs compiled into one Python package.
+All parts of the program are usable synchronous as well as asynchronous with the *asyncio* python package. 
+
+### Services included
+
+* Spotify
+* Genius
+* SoundCloud
+
+## Services one by one
+### <img align="left" width="20" height="20" src="https://raw.githubusercontent.com/simple-icons/simple-icons/4b882220efc78dc824c7647a81b47dd1d4fdd3d8/icons/spotify.svg"> Spotify
+
+Currently implemented: 
+* Artist, Album, Track and Playlist Extraction by Id and Url
+* Spotify Search
+
+### <img align="left" width="20" height="20" src="https://raw.githubusercontent.com/simple-icons/simple-icons/4b882220efc78dc824c7647a81b47dd1d4fdd3d8/icons/soundcloud.svg"> SoundCloud
+
+Currently implemented:
+* Track and Playlist Extraction by Id and Url
+* SoundCloud Search
+
+### <img align="left" width="20" height="20" src="https://raw.githubusercontent.com/simple-icons/simple-icons/3db785c36a94b3f15587244f9c2dd3d6275a7097/icons/genius.svg">Genius
+
+Currently implemented:
+* Track Search
+* Lyrics Extraction
+
+
