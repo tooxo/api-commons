@@ -11,7 +11,7 @@ def get_request_sync(url: str, extra_headers=None) -> str:
         extra_headers = {}
     req: Request = Request(url=url, headers=extra_headers)
     with urlopen(req) as response:
-        return response.read()
+        return response.read().decode()
 
 
 async def get_request_async(url: str, extra_headers=None) -> str:
@@ -28,7 +28,7 @@ def post_request_sync(url: str, payload: str = None, extra_headers=None) -> str:
         url=url, data=payload.encode(), headers=extra_headers
     )
     with urlopen(req) as response:
-        return response.read()
+        return response.read().decode()
 
 
 async def post_request_async(
