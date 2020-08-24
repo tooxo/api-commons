@@ -1,8 +1,9 @@
 import json
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 import genius
+from genius.utils import extract_text
 
 
 @dataclass
@@ -20,8 +21,11 @@ class Stats:
     def from_api_response(cls, raw_api_response: str):
         parsed_api_response: dict = json.loads(raw_api_response)
         return cls(
-            **{k: v for k, v in parsed_api_response.items() if
-               k in cls.__annotations__.keys()}
+            **{
+                k: v
+                for k, v in parsed_api_response.items()
+                if k in cls.__annotations__.keys()
+            }
         )
 
 
@@ -39,8 +43,11 @@ class Album:
     def from_api_response(cls, raw_api_response: str):
         parsed_api_response: dict = json.loads(raw_api_response)
         return cls(
-            **{k: v for k, v in parsed_api_response.items() if
-               k in cls.__annotations__.keys()}
+            **{
+                k: v
+                for k, v in parsed_api_response.items()
+                if k in cls.__annotations__.keys()
+            }
         )
 
 
@@ -60,6 +67,49 @@ class Artist:
     def from_api_response(cls, raw_api_response: str):
         parsed_api_response: dict = json.loads(raw_api_response)
         return cls(
-            **{k: v for k, v in parsed_api_response.items() if
-               k in cls.__annotations__.keys()}
+            **{
+                k: v
+                for k, v in parsed_api_response.items()
+                if k in cls.__annotations__.keys()
+            }
+        )
+
+
+@dataclass
+class Lyric:
+    text: str
+    annotation_id: Optional[int] = None
+    annotation: Optional[str] = None
+
+    def put_annotation(self, annotation: dict):
+        self.annotation = extract_text(
+            annotation["annotations"][0]["body"]["dom"]
+        )
+
+    @classmethod
+    def from_api_response(cls, raw_api_response: str) -> "genius.Lyric":
+        if not raw_api_response.startswith("{"):
+            return cls(raw_api_response)
+        parsed_api_response: dict = json.loads(raw_api_response)
+        return cls(
+            text=extract_text(parsed_api_response),
+            annotation_id=int(parsed_api_response["data"]["id"]),
+        )
+
+
+@dataclass
+class LyricsBlock:
+    lyrics: List[Lyric]
+
+    @property
+    def lyrics_str(self):
+        return "\n".join(map(lambda item: item.text, self.lyrics))
+
+    @classmethod
+    def from_api_response(cls, raw_api_response: str):
+        return cls(
+            [
+                Lyric.from_api_response(json.dumps(x) if type(x) is dict else x)
+                for x in json.loads(raw_api_response)
+            ]
         )
