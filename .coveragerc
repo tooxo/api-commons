@@ -1,6 +1,6 @@
 [run]
-parallel=True
+parallel=False
 
 [report]
 include=./*
-show_missing=False
+show_missing=True
