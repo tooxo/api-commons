@@ -6,14 +6,13 @@ import base64
 # this key is also different from "normal" genius api keys, because the server
 # responds with not only the song meta data but also the lyrics and annotations
 import json
-from typing import List, Union, Any
+from typing import List, Union
 from urllib.parse import quote
 
 import genius
 from common.web import get_request_sync, get_request_async
 
-GENIUS_SECRET_ENC: str = \
-    "VjJ4U2JHRnRPVlZZTWpseFZEQldhR013YkhKV1JHeFlZMnN4UTJGRlNsSlVNMjh5V2xac1RGTjZWbEpXVlhoRVZGVldSR0pWT1c5a2JtUjRZV3hLWVU1c1pHbGpSMFowVW0xVmVsb3lWa2xpYmxwM1RYYzlQUT09"
+GENIUS_SECRET_ENC: str = "VjJ4U2JHRnRPVlZZTWpseFZEQldhR013YkhKV1JHeFlZMnN4UTJGRlNsSlVNMjh5V2xac1RGTjZWbEpXVlhoRVZGVldSR0pWT1c5a2JtUjRZV3hLWVU1c1pHbGpSMFowVW0xVmVsb3lWa2xpYmxwM1RYYzlQUT09"
 
 # this is a simple measure to prevent search engine crawlers from finding this
 GENIUS_SECRET: str = base64.b64decode(
@@ -23,7 +22,7 @@ GENIUS_SECRET: str = base64.b64decode(
 REFERENCE_HEADERS = {
     "Host": "genius.com",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, "
-                  "like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+    "like Gecko) Chrome/83.0.4103.116 Safari/537.36",
 }
 
 
@@ -52,17 +51,19 @@ async def request_id_async(song_id: str) -> str:
 def request_referents(referent_list: List[str]) -> str:
     return get_request_sync(
         url=f"https://genius.com/api/referents/multi?ids="
-            f"{quote(','.join(referent_list))}",
-        extra_headers=REFERENCE_HEADERS
+        f"{quote(','.join(referent_list))}",
+        extra_headers=REFERENCE_HEADERS,
     ).replace("\xa0", " ")
 
 
 async def request_referents_async(referent_list: List[str]) -> str:
-    return (await get_request_async(
-        url=f"https://genius.com/api/referents/multi?ids="
+    return (
+        await get_request_async(
+            url=f"https://genius.com/api/referents/multi?ids="
             f"{quote(','.join(referent_list))}",
-        extra_headers=REFERENCE_HEADERS
-    )).replace("\xa0", " ")
+            extra_headers=REFERENCE_HEADERS,
+        )
+    ).replace("\xa0", " ")
 
 
 def parse_referents(referent_response: str) -> dict:
@@ -128,3 +129,7 @@ def extract_text(lyrics_holder: dict) -> str:
             lyrics_holder["children"],
         )
     )
+
+
+def extract_title_from_url(url: str) -> str:
+    return url.split("/")[-1].replace("lyrics", "").replace("-", " ").strip()

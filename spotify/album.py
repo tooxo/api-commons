@@ -41,7 +41,9 @@ class Album:
             ]
             if "artists" in parsed_api_response
             else None,
-            available_markets=parsed_api_response["available_markets"],
+            available_markets=parsed_api_response.get(
+                "available_markets", None
+            ),
             copyrights=[
                 spotify.Copyright.from_api_response(json.dumps(x))
                 for x in parsed_api_response["copyrights"]
@@ -78,13 +80,18 @@ class Album:
             release_date_precision=parsed_api_response["release_date_precision"]
             if "release_date_precision" in parsed_api_response
             else None,
-            tracks=extract_track_list(parsed_api_response),
+            tracks=[
+                spotify.Track.from_api_response(json.dumps(x))
+                for x in extract_track_list(parsed_api_response)
+            ]
+            if "tracks" in parsed_api_response
+            else None,
             uri=parsed_api_response["uri"],
         )
 
     @staticmethod
-    def from_id(artist_id: str, token: str):
-        url = f"https://api.spotify.com/v1/albums/{artist_id}"
+    def from_id(album_id: str, token: str):
+        url = f"https://api.spotify.com/v1/albums/{album_id}"
         return Album.from_api_response(
             get_request_sync(
                 url=url, extra_headers=build_auth_header(token=token)
@@ -93,8 +100,8 @@ class Album:
 
     @staticmethod
     @has_aiohttp
-    async def from_id_async(artist_id: str, token: str):
-        url = f"https://api.spotify.com/v1/albums/{artist_id}"
+    async def from_id_async(album_id: str, token: str):
+        url = f"https://api.spotify.com/v1/albums/{album_id}"
         return Album.from_api_response(
             await get_request_async(
                 url=url, extra_headers=build_auth_header(token)

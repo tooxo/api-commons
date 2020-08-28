@@ -55,7 +55,7 @@ class Artist:
 
     @staticmethod
     def from_id(artist_id: str, token: str):
-        url = f"https://api.spotify.com/v1/artist/{artist_id}"
+        url = f"https://api.spotify.com/v1/artists/{artist_id}"
         return Artist.from_api_response(
             get_request_sync(
                 url=url, extra_headers=build_auth_header(token=token)
@@ -65,7 +65,7 @@ class Artist:
     @staticmethod
     @has_aiohttp
     async def from_id_async(artist_id: str, token: str):
-        url = f"https://api.spotify.com/v1/artist/{artist_id}"
+        url = f"https://api.spotify.com/v1/artists/{artist_id}"
         return Artist.from_api_response(
             await get_request_async(
                 url=url, extra_headers=build_auth_header(token)
@@ -88,8 +88,11 @@ class Artist:
         return await Artist.from_id_async(self.id, token)
 
     @staticmethod
-    def get_top_tracks_by_id(artist_id: str, token: str):
-        url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks"
+    def get_top_tracks_by_id(artist_id: str, token: str, country="us"):
+        url = (
+            f"https://api.spotify.com/v1/artists/"
+            f"{artist_id}/top-tracks?country={country}"
+        )
         parsed_response: dict = json.loads(
             get_request_sync(url, extra_headers=build_auth_header(token=token))
         )
@@ -100,8 +103,13 @@ class Artist:
 
     @staticmethod
     @has_aiohttp
-    async def get_top_tracks_by_id_async(artist_id: str, token: str):
-        url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks"
+    async def get_top_tracks_by_id_async(
+        artist_id: str, token: str, country="us"
+    ):
+        url = (
+            f"https://api.spotify.com/v1/artists/"
+            f"{artist_id}/top-tracks?country={country}"
+        )
         parsed_response: dict = json.loads(
             await get_request_async(
                 url, extra_headers=build_auth_header(token=token)

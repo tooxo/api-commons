@@ -7,7 +7,7 @@ import typing
 import spotify
 from common.utils import has_aiohttp
 from common.web import get_request_sync, get_request_async
-from spotify.utils import build_auth_header
+from spotify.utils import build_auth_header, extract_track_list
 
 
 class SearchType:
@@ -28,22 +28,22 @@ def _parse_search_response(
     if search_type == SearchType.ALBUM:
         return [
             spotify.Album.from_api_response(json.dumps(x))
-            for x in search_response["items"]
+            for x in search_response["albums"]["items"]
         ]
     if search_type == SearchType.ARTIST:
         return [
             spotify.Artist.from_api_response(json.dumps(x))
-            for x in search_response["items"]
+            for x in search_response["artists"]["items"]
         ]
     if search_type == SearchType.PLAYLIST:
         return [
             spotify.Playlist.from_api_response(json.dumps(x))
-            for x in search_response["items"]
+            for x in search_response["playlists"]["items"]
         ]
     if search_type == SearchType.TRACK:
         return [
             spotify.Track.from_api_response(json.dumps(x))
-            for x in search_response["items"]
+            for x in extract_track_list(search_response)
         ]
 
 
@@ -54,10 +54,7 @@ def search(
     search_type: Type[SearchType] = SearchType.TRACK,
 ) -> List[
     typing.Union[
-        "spotify.Album",
-        "spotify.Artist",
-        "spotify.Playlist",
-        "spotify" ".Track",
+        "spotify.Album", "spotify.Artist", "spotify.Playlist", "spotify.Track",
     ]
 ]:
     if search_type in [SearchType.SHOW, SearchType.EPISODE]:

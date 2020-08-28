@@ -4,8 +4,14 @@ from dataclasses import dataclass
 from typing import List
 
 import genius
-from genius.utils import request_id, request_id_async, parse_lyrics, \
-    request_referents, parse_referents, request_referents_async
+from genius.utils import (
+    request_id,
+    request_id_async,
+    parse_lyrics,
+    request_referents,
+    parse_referents,
+    request_referents_async,
+)
 
 
 @dataclass
@@ -65,20 +71,12 @@ class Lyrics:
 
     def load_annotations(self) -> None:
         self._put_annotations(
-            parse_referents(
-                request_referents(
-                    self.annotation_ids
-                )
-            )
+            parse_referents(request_referents(self.annotation_ids))
         )
 
     async def load_annotations_async(self) -> None:
         self._put_annotations(
-            parse_referents(
-                await request_referents_async(
-                    self.annotation_ids
-                )
-            )
+            parse_referents(await request_referents_async(self.annotation_ids))
         )
 
     @classmethod

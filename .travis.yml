@@ -1,0 +1,16 @@
+language: python
+
+python:
+    - "3.6"
+    - "3.7"
+    - "3.8"
+
+before_install:
+    - pip install coverage coveralls
+    - pip install -r requirements.txt -U
+
+script:
+    - coverage run -m unittest discover
+
+after_script:
+    - coveralls

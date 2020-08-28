@@ -21,3 +21,15 @@ class AsynchronousLibrariesNotFoundException(Exception):
     Raised when an asynchronous exception is called while not having the
     dependencies installed
     """
+
+
+class ExtractionError(RuntimeError):
+    """
+    Main class for errors occurring while extraction
+    """
+
+
+class NoResultsFound(ExtractionError):
+    """
+    Raised when no results were found
+    """

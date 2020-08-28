@@ -5,6 +5,7 @@ from urllib.parse import quote
 from typing import List
 
 import genius
+from common.error import NoResultsFound
 
 BASE_URL = "https://genius.com/api/search/song?q={}"
 
@@ -17,6 +18,8 @@ def prepare_search_results(raw_response: str) -> List["genius.SearchResult"]:
     raw_response = raw_response.replace("\xa0", " ")
     parsed: dict = json.loads(raw_response)
     hits: List[dict] = parsed["response"]["sections"][0]["hits"]
+    if not hits:
+        raise NoResultsFound("No results found.")
     return sorted(
         [
             genius.SearchResult.from_api_response(json.dumps(x["result"]))

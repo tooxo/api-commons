@@ -15,7 +15,7 @@ class Playlist:
     collaborative: bool
     description: str
     external_urls: "spotify.ExternalUrls"
-    followers: int
+    followers: Optional[int]
     endpoint: str
     id: str
     images: List["spotify.Image"]
@@ -23,7 +23,7 @@ class Playlist:
     owner: "spotify.User"
     public: Optional[bool]
     snapshot_id: str
-    tracks: List["spotify.Track"]
+    tracks: Optional[List["spotify.Track"]]
     uri: str
 
     @classmethod
@@ -35,7 +35,9 @@ class Playlist:
             external_urls=spotify.ExternalUrls.from_api_response(
                 json.dumps(parsed_api_response["external_urls"])
             ),
-            followers=parsed_api_response["followers"]["total"],
+            followers=parsed_api_response["followers"]["total"]
+            if "followers" in parsed_api_response
+            else None,
             endpoint=parsed_api_response["href"],
             id=parsed_api_response["id"],
             images=[
@@ -51,7 +53,9 @@ class Playlist:
             tracks=[
                 spotify.Track.from_api_response(json.dumps(x["track"]))
                 for x in parsed_api_response["tracks"]["items"]
-            ],
+            ]
+            if "items" in parsed_api_response["tracks"]
+            else None,
             uri=parsed_api_response["uri"],
         )
 
@@ -70,7 +74,9 @@ class Playlist:
             else copied_parsed_response["next"]
         ):
             response: str = get_request_sync(
-                url=copied_parsed_response["tracks"]["next"],
+                url=copied_parsed_response["tracks"]["next"]
+                if "tracks" in copied_parsed_response
+                else copied_parsed_response["next"],
                 extra_headers=build_auth_header(token=token),
             )
             copied_parsed_response = json.loads(response)
@@ -96,7 +102,9 @@ class Playlist:
             else copied_parsed_response["next"]
         ):
             response: str = await get_request_async(
-                url=copied_parsed_response["tracks"]["next"],
+                url=copied_parsed_response["tracks"]["next"]
+                if "tracks" in copied_parsed_response
+                else copied_parsed_response["next"],
                 extra_headers=build_auth_header(token=token),
             )
             copied_parsed_response = json.loads(response)

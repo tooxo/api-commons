@@ -93,7 +93,9 @@ class Lyric:
         parsed_api_response: dict = json.loads(raw_api_response)
         return cls(
             text=extract_text(parsed_api_response),
-            annotation_id=int(parsed_api_response["data"]["id"]),
+            annotation_id=int(parsed_api_response["data"]["id"])
+            if "data" in parsed_api_response
+            else None,
         )
 
 
