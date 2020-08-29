@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/github/tooxo/api-commons/badge.svg?branch=master)](https://coveralls.io/github/tooxo/api-commons?branch=master)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Build Status](https://travis-ci.com/tooxo/api-commons.svg?branch=master)](https://travis-ci.com/tooxo/api-commons)
 # tooxo / api-commons
 
 Wrappers for multiple APIs compiled into one Python package.
