@@ -11,7 +11,7 @@ def get_request_sync(url: str, extra_headers=None) -> str:
         extra_headers = {}
     req: Request = Request(url=url, headers=extra_headers)
     with urlopen(req) as response:
-        return response.read().decode()
+        return response.read().decode("utf-8")
 
 
 async def get_request_async(url: str, extra_headers=None) -> str:
@@ -19,7 +19,7 @@ async def get_request_async(url: str, extra_headers=None) -> str:
         extra_headers = {}
     async with aiohttp.ClientSession(headers=extra_headers) as cs:
         async with cs.get(url=url) as req:
-            result = await req.text()
+            result = await req.text(encoding="utf-8")
     return result
 
 
@@ -30,7 +30,7 @@ def post_request_sync(url: str, payload: str = None, extra_headers=None) -> str:
         url=url, data=payload.encode(), headers=extra_headers
     )
     with urlopen(req) as response:
-        return response.read().decode()
+        return response.read().decode("utf-8")
 
 
 async def post_request_async(
@@ -40,5 +40,5 @@ async def post_request_async(
         extra_headers = {}
     async with aiohttp.ClientSession(headers=extra_headers) as cs:
         async with cs.post(url=url, data=payload) as res:
-            result = await res.text()
+            result = await res.text(encoding="utf-8")
     return result
