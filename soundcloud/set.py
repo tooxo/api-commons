@@ -72,30 +72,36 @@ class Set:
         )
 
     @staticmethod
-    def get_from_url(playlist_url: str, token: str) -> "Set":
+    def get_from_url(
+        playlist_url: str, token: str, flat: bool = False
+    ) -> "Set":
         playlist_data = resolve_url(url=playlist_url, token=token)
         parsed_set_data: dict = json.loads(playlist_data)
         missing_ids: List[str] = get_missing_ids(parsed_set_data)
-        missing_tracks = fulfill_missing_requests(
-            missing_ids=missing_ids, token=token
-        )
         parsed_set_data["tracks"] = list(
             filter(lambda item: "title" in item, parsed_set_data["tracks"])
         )
-        parsed_set_data["tracks"].extend(missing_tracks)
+        if not flat:
+            missing_tracks = fulfill_missing_requests(
+                missing_ids=missing_ids, token=token
+            )
+            parsed_set_data["tracks"].extend(missing_tracks)
         return Set.from_api_response(json.dumps(parsed_set_data))
 
     @staticmethod
     @has_aiohttp
-    async def get_from_url_async(playlist_url: str, token: str) -> "Set":
+    async def get_from_url_async(
+        playlist_url: str, token: str, flat: bool = False
+    ) -> "Set":
         playlist_data = await resolve_url_async(url=playlist_url, token=token)
         parsed_set_data: dict = json.loads(playlist_data)
         missing_ids: List[str] = get_missing_ids(parsed_set_data)
-        missing_tracks = fulfill_missing_requests_async(
+        missing_tracks = await fulfill_missing_requests_async(
             missing_ids=missing_ids, token=token
         )
-        parsed_set_data["tracks"] = list(
-            filter(lambda item: "title" in item, parsed_set_data["tracks"])
-        )
-        parsed_set_data["tracks"].extend(missing_tracks)
+        if not flat:
+            parsed_set_data["tracks"] = list(
+                filter(lambda item: "title" in item, parsed_set_data["tracks"])
+            )
+            parsed_set_data["tracks"].extend(missing_tracks)
         return Set.from_api_response(json.dumps(parsed_set_data))

@@ -17,8 +17,10 @@ def get_request_sync(url: str, extra_headers=None) -> str:
 async def get_request_async(url: str, extra_headers=None) -> str:
     if extra_headers is None:
         extra_headers = {}
-    async with aiohttp.request("GET", url=url, headers=extra_headers) as req:
-        return await req.text()
+    async with aiohttp.ClientSession(headers=extra_headers) as cs:
+        async with cs.get(url=url) as req:
+            result = await req.text()
+    return result
 
 
 def post_request_sync(url: str, payload: str = None, extra_headers=None) -> str:
@@ -36,7 +38,7 @@ async def post_request_async(
 ) -> str:
     if extra_headers is None:
         extra_headers = {}
-    async with aiohttp.request(
-        "POST", url=url, data=payload, headers=extra_headers
-    ) as res:
-        return await res.text()
+    async with aiohttp.ClientSession(headers=extra_headers) as cs:
+        async with cs.post(url=url, data=payload) as res:
+            result = await res.text()
+    return result
