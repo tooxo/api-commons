@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 from typing import List
 
-import genius
-from genius.utils import (
+import api_commons.genius as genius
+from .utils import (
     request_id,
     request_id_async,
     parse_lyrics,
@@ -54,16 +54,18 @@ class Lyrics:
     def annotation_ids(self) -> List[str]:
         ids = []
         for lb in self.lyrics:
-            for ly in lb.lyrics:
-                if ly.annotation_id:
-                    ids.append(str(ly.annotation_id))
+            for ln in lb.lyrics:
+                for ly in ln.parts:
+                    if ly.annotation_id:
+                        ids.append(str(ly.annotation_id))
         return ids
 
     def _put_annotation(self, annotation_id: str, annotation: dict) -> None:
         for lb in self.lyrics:
-            for ly in lb.lyrics:
-                if ly.annotation_id == int(annotation_id):
-                    ly.put_annotation(annotation)
+            for ln in lb.lyrics:
+                for ly in ln.parts:
+                    if ly.annotation_id == int(annotation_id):
+                        ly.put_annotation(annotation)
 
     def _put_annotations(self, annotations: dict):
         for k in annotations:

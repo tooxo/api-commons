@@ -4,10 +4,10 @@ import urllib.parse
 
 import typing
 
-import spotify
+import api_commons.spotify as spotify
 from common.utils import has_aiohttp
 from common.web import get_request_sync, get_request_async
-from spotify.utils import build_auth_header, extract_track_list
+from .utils import build_auth_header, extract_track_list
 
 
 class SearchType:

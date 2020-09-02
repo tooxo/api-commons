@@ -1,24 +1,23 @@
 from dataclasses import dataclass
 import json
-import spotify
+import api_commons.spotify as spotify
 
 from typing import List, Optional
 
 from common.error import IncompleteObjectError
 from common.utils import has_aiohttp
 from common.web import get_request_sync, get_request_async
-from spotify import ExternalUrls, Image
-from spotify.utils import build_auth_header
+from .utils import build_auth_header
 
 
 @dataclass
 class Artist:
-    external_urls: ExternalUrls
+    external_urls: spotify.ExternalUrls
     followers: Optional[int]
     genres: Optional[List[str]]
     endpoint: str
     id: str
-    images: Optional[List[Image]]
+    images: Optional[List[spotify.Image]]
     name: str
     popularity: Optional[int]
     uri: str
@@ -29,7 +28,7 @@ class Artist:
     def from_api_response(cls, api_response: str) -> "Artist":
         parsed_api_response = json.loads(api_response)
         return cls(
-            external_urls=ExternalUrls.from_api_response(
+            external_urls=spotify.ExternalUrls.from_api_response(
                 json.dumps(parsed_api_response["external_urls"])
             ),
             followers=parsed_api_response["followers"]["total"]
@@ -41,7 +40,7 @@ class Artist:
             endpoint=parsed_api_response["href"],
             id=parsed_api_response["id"],
             images=[
-                Image.from_api_response(json.dumps(x))
+                spotify.Image.from_api_response(json.dumps(x))
                 for x in parsed_api_response["images"]
             ]
             if "images" in parsed_api_response

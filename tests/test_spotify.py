@@ -3,7 +3,7 @@ import unittest
 
 from typing import List
 
-import spotify
+import api_commons.spotify as spotify
 
 import os
 

@@ -1,3 +1,7 @@
+"""
+SoundCloud Track
+"""
+
 from dataclasses import dataclass
 
 import json
@@ -6,10 +10,10 @@ from typing import List, Optional
 from common.error import IncompleteObjectError
 from common.utils import has_aiohttp
 from common.web import get_request_sync, get_request_async
-from spotify.album import Album
-from spotify.artist import Artist
-from spotify.support_classes import ExternalIds, ExternalUrls
-from spotify.utils import build_auth_header
+from api_commons.spotify.utils import build_auth_header
+from api_commons.spotify.album import Album
+from api_commons.spotify.artist import Artist
+from api_commons.spotify.support_classes import ExternalUrls, ExternalIds
 
 
 @dataclass

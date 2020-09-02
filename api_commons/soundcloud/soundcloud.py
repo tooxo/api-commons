@@ -1,6 +1,6 @@
 from common.utils import has_aiohttp
 from common.web import get_request_sync, get_request_async
-from soundcloud.utils import (
+from .utils import (
     extract_scripts_from_main_page,
     extract_token_from_script,
 )

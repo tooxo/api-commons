@@ -4,7 +4,7 @@ from urllib.parse import quote
 
 from typing import List
 
-import genius
+from api_commons import genius
 from common.error import NoResultsFound
 
 BASE_URL = "https://genius.com/api/search/song?q={}"

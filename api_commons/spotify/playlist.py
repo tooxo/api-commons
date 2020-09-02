@@ -3,11 +3,11 @@ from dataclasses import dataclass
 
 from typing import List, Optional
 
-import spotify
+import api_commons.spotify as spotify
 from common.error import IncompleteObjectError
 from common.utils import has_aiohttp
 from common.web import get_request_async, get_request_sync
-from spotify.utils import build_auth_header
+from .utils import build_auth_header
 
 
 @dataclass

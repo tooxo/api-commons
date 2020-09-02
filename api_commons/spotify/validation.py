@@ -5,7 +5,7 @@ from common.error import InvalidUrlError
 from common.utils import regex_raise_check
 
 if TYPE_CHECKING:
-    from spotify import SpotifyApi
+    from api_commons.spotify import SpotifyApi
 
 SPOTIFY_URL_REGEX = re.compile(
     r"^(http(s)?://)?"

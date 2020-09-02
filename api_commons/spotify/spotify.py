@@ -2,10 +2,11 @@ import base64
 import json
 import time
 
-import spotify.validation
+import api_commons.spotify as spotify
+import api_commons.spotify.validation
 from common.utils import has_aiohttp
 from common.web import post_request_sync, post_request_async
-from spotify.utils import extract_id
+from .utils import extract_id
 
 
 class SpotifyApi:

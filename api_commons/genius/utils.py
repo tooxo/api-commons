@@ -9,10 +9,11 @@ import json
 from typing import List, Union
 from urllib.parse import quote
 
-import genius
+import api_commons.genius as genius
 from common.web import get_request_sync, get_request_async
 
-GENIUS_SECRET_ENC: str = "VjJ4U2JHRnRPVlZZTWpseFZEQldhR013YkhKV1JHeFlZMnN4UTJGRlNsSlVNMjh5V2xac1RGTjZWbEpXVlhoRVZGVldSR0pWT1c5a2JtUjRZV3hLWVU1c1pHbGpSMFowVW0xVmVsb3lWa2xpYmxwM1RYYzlQUT09"
+GENIUS_SECRET_ENC: str = \
+    "VjJ4U2JHRnRPVlZZTWpseFZEQldhR013YkhKV1JHeFlZMnN4UTJGRlNsSlVNMjh5V2xac1RGTjZWbEpXVlhoRVZGVldSR0pWT1c5a2JtUjRZV3hLWVU1c1pHbGpSMFowVW0xVmVsb3lWa2xpYmxwM1RYYzlQUT09"
 
 # this is a simple measure to prevent search engine crawlers from finding this
 GENIUS_SECRET: str = base64.b64decode(
@@ -22,7 +23,7 @@ GENIUS_SECRET: str = base64.b64decode(
 REFERENCE_HEADERS = {
     "Host": "genius.com",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, "
-    "like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+                  "like Gecko) Chrome/83.0.4103.116 Safari/537.36",
 }
 
 
@@ -51,7 +52,7 @@ async def request_id_async(song_id: str) -> str:
 def request_referents(referent_list: List[str]) -> str:
     return get_request_sync(
         url=f"https://genius.com/api/referents/multi?ids="
-        f"{quote(','.join(referent_list))}",
+            f"{quote(','.join(referent_list))}",
         extra_headers=REFERENCE_HEADERS,
     ).replace("\xa0", " ")
 
@@ -60,7 +61,7 @@ async def request_referents_async(referent_list: List[str]) -> str:
     return (
         await get_request_async(
             url=f"https://genius.com/api/referents/multi?ids="
-            f"{quote(','.join(referent_list))}",
+                f"{quote(','.join(referent_list))}",
             extra_headers=REFERENCE_HEADERS,
         )
     ).replace("\xa0", " ")
@@ -85,12 +86,14 @@ def parse_lyrics(lyrics_catalogue: dict) -> List["genius.LyricsBlock"]:
         ):
             if not cnt:
                 cnt = True
+                lyrics.append(ly)
                 continue
             lyrics_blocks.append(
                 genius.LyricsBlock.from_api_response(
                     json.dumps(filter_lyrics_list(lyrics))
                 )
             )
+
             lyrics = []
         lyrics.append(ly)
         cnt = False
@@ -103,13 +106,22 @@ def parse_lyrics(lyrics_catalogue: dict) -> List["genius.LyricsBlock"]:
 
 
 def filter_lyrics_list(lyrics_list: list) -> list:
-    lyrics_list = filter(lambda item: item != {"tag": "br"}, lyrics_list)
-    lyrics_list = filter(
-        lambda item: item["tag"] != "dfp-unit"
-        if not isinstance(item, str)
-        else True,
-        lyrics_list,
-    )
+    # lyrics_list = filter(lambda item: item != {"tag": "br"}, lyrics_list)
+    lyrics_list = map(lambda item: "\n" if item == {"tag": "br"} or (
+        item["tag"] == "dfp-unit" if isinstance(item,
+                                                dict) else False) else item,
+                      lyrics_list)
+
+    # _l = list(lyrics_list)
+
+    # lyrics_list = "".join(_l).split("\n")
+
+    # lyrics_list = filter(
+    #    lambda item: item["tag"] != "dfp-unit"
+    #    if not isinstance(item, str)
+    #    else True,
+    #    lyrics_list,
+    # )
     return list(lyrics_list)
 
 
@@ -117,7 +129,7 @@ def extract_text(lyrics_holder: dict) -> str:
     def extract_one_text(text_holder: dict) -> str:
         if text_holder["tag"] in ["br", "img"]:
             return "\n"
-        if text_holder["tag"] in ["p", "a", "i"]:
+        if text_holder["tag"] in ["p", "a", "i", "b"]:
             return extract_text(text_holder)
         return " "
 
@@ -126,7 +138,7 @@ def extract_text(lyrics_holder: dict) -> str:
             lambda item: extract_one_text(item)
             if isinstance(item, dict)
             else item,
-            lyrics_holder["children"],
+            lyrics_holder["children"] if "children" in lyrics_holder else {},
         )
     )
 

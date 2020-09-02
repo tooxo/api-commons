@@ -1,6 +1,6 @@
 import asyncio
 import unittest
-import soundcloud
+import api_commons.soundcloud as soundcloud
 import urllib.request
 
 sc = soundcloud.SoundCloudApi()

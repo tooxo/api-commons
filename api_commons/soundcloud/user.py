@@ -1,8 +1,8 @@
 import json
 from dataclasses import dataclass
 from typing import Optional, List
-import soundcloud
-from soundcloud.utils import extract_visuals
+import api_commons.soundcloud as soundcloud
+from .utils import extract_visuals
 
 
 @dataclass

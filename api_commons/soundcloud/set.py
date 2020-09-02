@@ -2,9 +2,9 @@ import json
 from dataclasses import dataclass
 from typing import Optional, List
 
-import soundcloud
+import api_commons.soundcloud as soundcloud
 from common.utils import has_aiohttp
-from soundcloud.utils import (
+from .utils import (
     resolve_url,
     get_missing_ids,
     fulfill_missing_requests,

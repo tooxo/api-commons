@@ -3,25 +3,27 @@ from dataclasses import dataclass
 
 from typing import List, Optional
 
-import spotify
+import api_commons.spotify as spotify
 from common.error import IncompleteObjectError
 from common.utils import has_aiohttp
 from common.web import get_request_sync, get_request_async
-from spotify.utils import build_auth_header, extract_track_list
+from .utils import build_auth_header, extract_track_list
+from .support_classes import ExternalIds, ExternalUrls, Copyright, Image
+from .artist import Artist
 
 
 @dataclass
 class Album:
     album_type: str
-    artists: Optional[List["spotify.Artist"]]
+    artists: Optional[List[Artist]]
     available_markets: List[str]
-    copyrights: Optional[List["spotify.Copyright"]]
-    external_ids: Optional["spotify.ExternalIds"]
-    external_urls: "spotify.ExternalUrls"
+    copyrights: Optional[List[Copyright]]
+    external_ids: Optional[ExternalIds]
+    external_urls: ExternalUrls
     genres: Optional[List[str]]
     endpoint: str
     id: str
-    images: List[spotify.Image]
+    images: List[Image]
     label: Optional[str]
     name: str
     popularity: Optional[int]
@@ -36,7 +38,7 @@ class Album:
         return cls(
             album_type=parsed_api_response["album_type"],
             artists=[
-                spotify.Artist.from_api_response(json.dumps(x))
+                Artist.from_api_response(json.dumps(x))
                 for x in parsed_api_response["artists"]
             ]
             if "artists" in parsed_api_response
@@ -45,17 +47,17 @@ class Album:
                 "available_markets", None
             ),
             copyrights=[
-                spotify.Copyright.from_api_response(json.dumps(x))
+                Copyright.from_api_response(json.dumps(x))
                 for x in parsed_api_response["copyrights"]
             ]
             if "copyrights" in parsed_api_response
             else None,
-            external_ids=spotify.ExternalIds.from_api_response(
+            external_ids=ExternalIds.from_api_response(
                 json.dumps(parsed_api_response["external_ids"])
             )
             if "external_ids" in parsed_api_response
             else None,
-            external_urls=spotify.ExternalUrls.from_api_response(
+            external_urls=ExternalUrls.from_api_response(
                 json.dumps(parsed_api_response["external_urls"])
             ),
             genres=parsed_api_response["genres"]
@@ -64,7 +66,7 @@ class Album:
             endpoint=parsed_api_response["href"],
             id=parsed_api_response["id"],
             images=[
-                spotify.Image.from_api_response(json.dumps(x))
+                Image.from_api_response(json.dumps(x))
                 for x in parsed_api_response["images"]
             ],
             label=parsed_api_response["label"]
@@ -90,7 +92,7 @@ class Album:
         )
 
     @staticmethod
-    def from_id(album_id: str, token: str):
+    def from_id(album_id: str, token: str) -> "Album":
         url = f"https://api.spotify.com/v1/albums/{album_id}"
         return Album.from_api_response(
             get_request_sync(
@@ -100,7 +102,7 @@ class Album:
 
     @staticmethod
     @has_aiohttp
-    async def from_id_async(album_id: str, token: str):
+    async def from_id_async(album_id: str, token: str) -> "Album":
         url = f"https://api.spotify.com/v1/albums/{album_id}"
         return Album.from_api_response(
             await get_request_async(

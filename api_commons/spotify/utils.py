@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-import spotify
-import spotify.validation
+import api_commons.spotify as spotify
+import api_commons.spotify.validation as validation
 from common.utils import regex_search
 
 

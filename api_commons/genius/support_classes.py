@@ -2,8 +2,8 @@ import json
 from dataclasses import dataclass
 from typing import Optional, List
 
-import genius
-from genius.utils import extract_text
+import api_commons.genius as genius
+from api_commons.genius.utils import extract_text
 
 
 @dataclass
@@ -89,10 +89,10 @@ class Lyric:
     @classmethod
     def from_api_response(cls, raw_api_response: str) -> "genius.Lyric":
         if not raw_api_response.startswith("{"):
-            return cls(raw_api_response)
+            return cls(json.loads(raw_api_response).strip())
         parsed_api_response: dict = json.loads(raw_api_response)
         return cls(
-            text=extract_text(parsed_api_response),
+            text=extract_text(parsed_api_response).strip(),
             annotation_id=int(parsed_api_response["data"]["id"])
             if "data" in parsed_api_response
             else None,
@@ -100,8 +100,27 @@ class Lyric:
 
 
 @dataclass
+class Line:
+    parts: List[Lyric]
+
+    @property
+    def text(self):
+        return "".join(map(lambda part: part.text, self.parts))
+
+    @classmethod
+    def from_api_response(cls, raw_api_response: str) -> "Line":
+        return cls(
+
+            [
+                Lyric.from_api_response(json.dumps(x)) for x in
+                json.loads(raw_api_response)
+            ]
+        )
+
+
+@dataclass
 class LyricsBlock:
-    lyrics: List[Lyric]
+    lyrics: List[Line]
 
     @property
     def lyrics_str(self):
@@ -109,9 +128,23 @@ class LyricsBlock:
 
     @classmethod
     def from_api_response(cls, raw_api_response: str):
+        parsed_api_response: list = json.loads(raw_api_response)
+        raw_lines = []
+        temp = []
+        for part in parsed_api_response:
+            if part == "\n":
+                raw_lines.append(temp)
+                temp = []
+                continue
+            temp.append(part)
+        raw_lines.append(temp)
+        raw_lines = list(filter(
+            lambda item: item != [],
+            raw_lines
+        ))
         return cls(
             [
-                Lyric.from_api_response(json.dumps(x) if type(x) is dict else x)
-                for x in json.loads(raw_api_response)
+                Line.from_api_response(json.dumps(x))
+                for x in raw_lines
             ]
         )

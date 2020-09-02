@@ -2,9 +2,11 @@ import json
 from dataclasses import dataclass
 from typing import Optional, List
 
-import soundcloud
+import api_commons.soundcloud as soundcloud
+from api_commons.soundcloud.support_classes import Visual, Stream
+from api_commons.soundcloud.user import User
 from common.utils import has_aiohttp
-from soundcloud.utils import (
+from .utils import (
     resolve_url,
     resolve_transcoding,
     resolve_url_async,
@@ -15,38 +17,72 @@ from soundcloud.utils import (
 
 @dataclass
 class Track:
+    """
+    Dataclass for SoundCloud Songs / Tracks.
+    """
     comment_count: int
+    """Number of comments under the Track."""
     full_duration: int
+    """Duration of the Track in milliseconds."""
     downloadable: bool
+    """True if the Track is downloadable directly from the Tracks page"""
     created_at: str
+    """Date on which the Track was uploaded to SoundCloud"""
     description: str
+    """Song description on the Tracks page"""
     title: str
+    """Song title of the Track."""
     duration: int
+    """See Track.full_duration"""
     artwork_url: str
+    """Url to to the Tracks artwork / album art."""
     tag_list: str
+    """Comma separated list of tags. May be empty."""
     genre: str
+    """Genre of the song. May be empty."""
     id: int
+    """SoundCloud internal id of the Track."""
     reposts_count: int
+    """Number of reposts by other users."""
     label_name: Optional[str]
+    """Name of the label associated with the artist. Empty if artist is 
+    independent."""
     last_modified: str
+    """Date on which the Track was modified."""
     commentable: bool
-    visuals: List["soundcloud.Visual"]
+    """True if a User can leave comments on the Track."""
+    visuals: List[Visual]
+    """List of Visuals associated with the Track."""
     uri: str
+    """SoundCloud intern api endpoint associated with the Track."""
     download_count: int
+    """Number of downloads."""
     likes_count: int
+    """Number of likes."""
     urn: str
+    """SoundCloud intern uniform resource name for the Track."""
     license: str
+    """License under which the Track is licensed to SoundCloud."""
     display_date: str
     release_date: Optional[str]
     waveform_url: str
     permalink: str
     permalink_url: str
-    user: "soundcloud.User"
+    user: User
     playback_count: int
-    streams: List["soundcloud.Stream"]
+    streams: List[Stream]
 
     @classmethod
     def from_api_response(cls, api_response: str) -> "Track":
+        """Parses a soundcloud api response into a track.
+
+        Args:
+            api_response: api_response from soundcloud servers
+
+        Returns:
+            A Track object with all attributes in the api_response
+
+        """
         parsed_api_response: dict = json.loads(api_response)
         return cls(
             comment_count=parsed_api_response["comment_count"],
