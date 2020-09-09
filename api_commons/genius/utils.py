@@ -10,10 +10,9 @@ from typing import List, Union
 from urllib.parse import quote
 
 import api_commons.genius as genius
-from common.web import get_request_sync, get_request_async
+from api_commons.common.web import get_request_sync, get_request_async
 
-GENIUS_SECRET_ENC: str = \
-    "VjJ4U2JHRnRPVlZZTWpseFZEQldhR013YkhKV1JHeFlZMnN4UTJGRlNsSlVNMjh5V2xac1RGTjZWbEpXVlhoRVZGVldSR0pWT1c5a2JtUjRZV3hLWVU1c1pHbGpSMFowVW0xVmVsb3lWa2xpYmxwM1RYYzlQUT09"
+GENIUS_SECRET_ENC: str = "VjJ4U2JHRnRPVlZZTWpseFZEQldhR013YkhKV1JHeFlZMnN4UTJGRlNsSlVNMjh5V2xac1RGTjZWbEpXVlhoRVZGVldSR0pWT1c5a2JtUjRZV3hLWVU1c1pHbGpSMFowVW0xVmVsb3lWa2xpYmxwM1RYYzlQUT09"
 
 # this is a simple measure to prevent search engine crawlers from finding this
 GENIUS_SECRET: str = base64.b64decode(
@@ -23,7 +22,7 @@ GENIUS_SECRET: str = base64.b64decode(
 REFERENCE_HEADERS = {
     "Host": "genius.com",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, "
-                  "like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+    "like Gecko) Chrome/83.0.4103.116 Safari/537.36",
 }
 
 
@@ -52,7 +51,7 @@ async def request_id_async(song_id: str) -> str:
 def request_referents(referent_list: List[str]) -> str:
     return get_request_sync(
         url=f"https://genius.com/api/referents/multi?ids="
-            f"{quote(','.join(referent_list))}",
+        f"{quote(','.join(referent_list))}",
         extra_headers=REFERENCE_HEADERS,
     ).replace("\xa0", " ")
 
@@ -61,7 +60,7 @@ async def request_referents_async(referent_list: List[str]) -> str:
     return (
         await get_request_async(
             url=f"https://genius.com/api/referents/multi?ids="
-                f"{quote(','.join(referent_list))}",
+            f"{quote(','.join(referent_list))}",
             extra_headers=REFERENCE_HEADERS,
         )
     ).replace("\xa0", " ")
@@ -73,6 +72,8 @@ def parse_referents(referent_response: str) -> dict:
 
 
 def parse_lyrics(lyrics_catalogue: dict) -> List["genius.LyricsBlock"]:
+    if "children" not in lyrics_catalogue["dom"]:
+        return []
     lyrics_list: List[Union[str, dict]] = lyrics_catalogue["dom"]["children"][
         0
     ]["children"]
@@ -107,10 +108,13 @@ def parse_lyrics(lyrics_catalogue: dict) -> List["genius.LyricsBlock"]:
 
 def filter_lyrics_list(lyrics_list: list) -> list:
     # lyrics_list = filter(lambda item: item != {"tag": "br"}, lyrics_list)
-    lyrics_list = map(lambda item: "\n" if item == {"tag": "br"} or (
-        item["tag"] == "dfp-unit" if isinstance(item,
-                                                dict) else False) else item,
-                      lyrics_list)
+    lyrics_list = map(
+        lambda item: "\n"
+        if item == {"tag": "br"}
+        or (item["tag"] == "dfp-unit" if isinstance(item, dict) else False)
+        else item,
+        lyrics_list,
+    )
 
     # _l = list(lyrics_list)
 
@@ -145,3 +149,31 @@ def extract_text(lyrics_holder: dict) -> str:
 
 def extract_title_from_url(url: str) -> str:
     return url.split("/")[-1].replace("lyrics", "").replace("-", " ").strip()
+
+
+def get_lookup_url(base_url: str) -> str:
+    return f"https://api.genius.com/lookup?url={base_url}"
+
+
+def get_album_tracks_url(album_id: int) -> str:
+    return f"https://api.genius.com/albums/{album_id}/tracks"
+
+
+def get_album_tracks(album_id: int) -> List:
+    return [
+        genius.Lyrics.from_api_response(json.dumps(x))
+        for x in json.loads(
+            get_request_sync(get_album_tracks_url(album_id), build_header())
+        )["response"]["tracks"]
+    ]
+
+
+async def get_album_tracks_async(album_id: int) -> List:
+    return [
+        genius.Lyrics.from_api_response(json.dumps(x))
+        for x in json.loads(
+            await get_request_async(
+                get_album_tracks_url(album_id), build_header()
+            )
+        )["response"]["tracks"]
+    ]

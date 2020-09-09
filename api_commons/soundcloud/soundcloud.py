@@ -1,5 +1,5 @@
-from common.utils import has_aiohttp
-from common.web import get_request_sync, get_request_async
+from api_commons.common.utils import has_aiohttp
+from api_commons.common.web import get_request_sync, get_request_async
 from .utils import (
     extract_scripts_from_main_page,
     extract_token_from_script,

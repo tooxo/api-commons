@@ -3,7 +3,7 @@ import api_commons.genius
 import api_commons.soundcloud
 
 # noinspection PyUnresolvedReferences
-import common.error
+import api_commons.common.error
 
 # define aliases
 # sc, sp, ge = soundcloud, spotify, genius

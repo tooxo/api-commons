@@ -5,7 +5,7 @@ from urllib.parse import quote
 from typing import List
 
 from api_commons import genius
-from common.error import NoResultsFound
+from api_commons.common.error import NoResultsFound
 
 BASE_URL = "https://genius.com/api/search/song?q={}"
 
@@ -15,7 +15,7 @@ def build_search_url(search_term: str) -> str:
 
 
 def prepare_search_results(raw_response: str) -> List["genius.SearchResult"]:
-    raw_response = raw_response.replace("\xa0", " ")
+    raw_response = raw_response
     parsed: dict = json.loads(raw_response)
     hits: List[dict] = parsed["response"]["sections"][0]["hits"]
     if not hits:

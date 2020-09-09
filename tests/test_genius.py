@@ -2,7 +2,7 @@ import asyncio
 import functools
 import unittest
 import api_commons.genius as genius
-from common.error import NoResultsFound
+from api_commons.common.error import NoResultsFound
 
 KANYE_WEST_RUNAWAY_LYRICS = (
     "[Produced by Kanye West, co-produced by Emile, Jeff Bhasker, & Mike "

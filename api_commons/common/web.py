@@ -11,7 +11,8 @@ def get_request_sync(url: str, extra_headers=None) -> str:
         extra_headers = {}
     req: Request = Request(url=url, headers=extra_headers)
     with urlopen(req) as response:
-        return response.read().decode("utf-8")
+        return response.read().decode("utf-8").replace("\xa0", " ").replace(
+            "\u200b", "")
 
 
 async def get_request_async(url: str, extra_headers=None) -> str:
@@ -19,7 +20,8 @@ async def get_request_async(url: str, extra_headers=None) -> str:
         extra_headers = {}
     async with aiohttp.ClientSession(headers=extra_headers) as cs:
         async with cs.get(url=url) as req:
-            result = await req.text(encoding="utf-8")
+            result = (await req.text(encoding="utf-8")).replace(
+                "\u200b", "")
     return result
 
 

@@ -5,7 +5,7 @@ from typing import Optional, List
 import api_commons.soundcloud as soundcloud
 from api_commons.soundcloud.support_classes import Visual, Stream
 from api_commons.soundcloud.user import User
-from common.utils import has_aiohttp
+from api_commons.common.utils import has_aiohttp
 from .utils import (
     resolve_url,
     resolve_transcoding,
@@ -20,6 +20,7 @@ class Track:
     """
     Dataclass for SoundCloud Songs / Tracks.
     """
+
     comment_count: int
     """Number of comments under the Track."""
     full_duration: int

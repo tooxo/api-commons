@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional, List
 
 import api_commons.soundcloud as soundcloud
-from common.utils import has_aiohttp
+from api_commons.common.utils import has_aiohttp
 from .utils import (
     resolve_url,
     get_missing_ids,

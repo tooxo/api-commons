@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import api_commons.spotify as spotify
 import api_commons.spotify.validation as validation
-from common.utils import regex_search
+from api_commons.common.utils import regex_search
 
 
 def build_auth_header(token: str) -> dict:

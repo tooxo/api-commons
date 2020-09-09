@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass
 
-from typing import List
+from typing import List, Optional
 
 import api_commons.genius as genius
 from .utils import (
@@ -33,14 +33,16 @@ class Lyrics:
     album: "genius.Album"
     primary_artist: "genius.Artist"
     featured_artists: List["genius.Artist"]
-    comment_count: int
-    custom_header_image_url: str
-    custom_song_art_image_url: str
-    description: str
-    is_music: bool
-    lyrics: List["genius.LyricsBlock"]
-    release_date: str
-    share_url: str
+    lyrics: Optional[List["genius.LyricsBlock"]]
+    comment_count: int = 0
+    custom_header_image_url: Optional[str] = None
+    custom_song_art_image_url: Optional[str] = None
+    description: Optional[str] = None
+    is_music: Optional[bool] = None
+    release_date: Optional[str] = None
+    share_url: Optional[str] = None
+    tags: Optional[List["genius.Tag"]] = None
+    track_no: Optional[int] = None
 
     @staticmethod
     def get_by_id(song_id: str) -> "genius.Lyrics":
@@ -60,11 +62,25 @@ class Lyrics:
                         ids.append(str(ly.annotation_id))
         return ids
 
+    def complete_from_id(self):
+        new = Lyrics.get_by_id(str(self.id))
+        for attr in self.__dict__:
+            if hasattr(new, attr) and not getattr(self, attr):
+                setattr(self, attr, getattr(new, attr))
+        return self
+
+    async def complete_from_id_async(self):
+        new = await Lyrics.get_by_id_async(str(self.id))
+        for attr in self.__dict__:
+            if hasattr(new, attr) and not getattr(self, attr):
+                setattr(self, attr, getattr(new, attr))
+        return self
+
     def _put_annotation(self, annotation_id: str, annotation: dict) -> None:
         for lb in self.lyrics:
             for ln in lb.lyrics:
                 for ly in ln.parts:
-                    if ly.annotation_id == int(annotation_id):
+                    if ly.annotation_id == annotation_id:
                         ly.put_annotation(annotation)
 
     def _put_annotations(self, annotations: dict):
@@ -84,6 +100,10 @@ class Lyrics:
     @classmethod
     def from_api_response(cls, api_response: str):
         parsed_api_response: dict = json.loads(api_response)
+        track_no: Optional[int] = None
+        if "song" in parsed_api_response:
+            track_no = parsed_api_response["number"] or -1
+            parsed_api_response = parsed_api_response["song"]
         if "response" in parsed_api_response:
             parsed_api_response = parsed_api_response["response"]["song"]
 
@@ -94,7 +114,7 @@ class Lyrics:
             genius.Album.from_api_response(
                 json.dumps(parsed_api_response["album"])
             )
-            if "album" in parsed_api_response
+            if "album" in parsed_api_response and parsed_api_response["album"]
             else None
         )
         parsed_api_response["primary_artist"] = genius.Artist.from_api_response(
@@ -108,9 +128,16 @@ class Lyrics:
             if "featured_artists" in parsed_api_response
             else None
         )
-        parsed_api_response["lyrics"] = parse_lyrics(
-            parsed_api_response["lyrics"]
+        parsed_api_response["lyrics"] = (
+            parse_lyrics(parsed_api_response["lyrics"])
+            if "lyrics" in parsed_api_response
+            else None
         )
+        parsed_api_response["tags"] = [
+            genius.Tag.from_api_response(json.dumps(x)) for x in
+            parsed_api_response["tags"]
+        ] if "tags" in parsed_api_response else None
+        parsed_api_response["track_no"] = track_no
         return cls(
             **{
                 k: v

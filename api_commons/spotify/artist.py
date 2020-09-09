@@ -4,9 +4,9 @@ import api_commons.spotify as spotify
 
 from typing import List, Optional
 
-from common.error import IncompleteObjectError
-from common.utils import has_aiohttp
-from common.web import get_request_sync, get_request_async
+from api_commons.common.error import IncompleteObjectError
+from api_commons.common.utils import has_aiohttp
+from api_commons.common.web import get_request_sync, get_request_async
 from .utils import build_auth_header
 
 

@@ -5,8 +5,8 @@ import urllib.parse
 import typing
 
 import api_commons.spotify as spotify
-from common.utils import has_aiohttp
-from common.web import get_request_sync, get_request_async
+from api_commons.common.utils import has_aiohttp
+from api_commons.common.web import get_request_sync, get_request_async
 from .utils import build_auth_header, extract_track_list
 
 

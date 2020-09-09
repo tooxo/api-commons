@@ -1,8 +1,8 @@
 import re
 from typing import Callable, TYPE_CHECKING
 
-from common.error import InvalidUrlError
-from common.utils import regex_raise_check
+from api_commons.common.error import InvalidUrlError
+from api_commons.common.utils import regex_raise_check
 
 if TYPE_CHECKING:
     from api_commons.spotify import SpotifyApi

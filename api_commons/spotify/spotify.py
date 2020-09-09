@@ -4,8 +4,8 @@ import time
 
 import api_commons.spotify as spotify
 import api_commons.spotify.validation
-from common.utils import has_aiohttp
-from common.web import post_request_sync, post_request_async
+from api_commons.common.utils import has_aiohttp
+from api_commons.common.web import post_request_sync, post_request_async
 from .utils import extract_id
 
 
