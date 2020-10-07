@@ -85,10 +85,12 @@ class Track:
 
         """
         parsed_api_response: dict = json.loads(api_response)
+        if len(parsed_api_response.keys()) == 4:
+            return None
         return cls(
             comment_count=parsed_api_response["comment_count"],
-            full_duration=parsed_api_response["full_duration"],
-            downloadable=parsed_api_response["downloadable"],
+            full_duration=parsed_api_response.get("full_duration", None),
+            downloadable=parsed_api_response.get("downloadable", None),
             created_at=parsed_api_response["created_at"],
             description=parsed_api_response["description"],
             title=parsed_api_response["title"],
