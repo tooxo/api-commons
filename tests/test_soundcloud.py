@@ -26,7 +26,7 @@ class TestSoundCloud(unittest.TestCase):
             sc.get_api_token(),
         )
         self.assertEqual(sc_set.title, "Charts")
-        self.assertEqual(len(sc_set.tracks), 356)
+        self.assertEqual(len(sc_set.tracks), 355)
 
     def test_track_extraction_async(self):
         trk = asyncio.run(
@@ -50,7 +50,7 @@ class TestSoundCloud(unittest.TestCase):
             )
         )
         self.assertEqual(sc_set.title, "Charts")
-        self.assertEqual(len(sc_set.tracks), 356)
+        self.assertEqual(len(sc_set.tracks), 355)
 
 
 if __name__ == "__main__":
