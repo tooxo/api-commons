@@ -43,6 +43,7 @@ class Lyrics:
     share_url: Optional[str] = None
     tags: Optional[List["genius.Tag"]] = None
     track_no: Optional[int] = None
+    apple_music_id: Optional[int] = None
 
     @staticmethod
     def get_by_id(song_id: str) -> "genius.Lyrics":
