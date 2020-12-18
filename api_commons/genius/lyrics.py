@@ -44,6 +44,7 @@ class Lyrics:
     tags: Optional[List["genius.Tag"]] = None
     track_no: Optional[int] = None
     apple_music_id: Optional[int] = None
+    youtube_url: Optional[str] = None
 
     @staticmethod
     def get_by_id(song_id: str) -> "genius.Lyrics":
@@ -89,14 +90,19 @@ class Lyrics:
             self._put_annotation(k, annotations[k])
 
     def load_annotations(self) -> None:
-        self._put_annotations(
-            parse_referents(request_referents(self.annotation_ids))
-        )
+        for smaller_annotation_list in [self.annotation_ids[i:i + 20] for i in
+                                        range(0, len(self.annotation_ids), 20)]:
+            self._put_annotations(
+                parse_referents(request_referents(smaller_annotation_list))
+            )
 
     async def load_annotations_async(self) -> None:
-        self._put_annotations(
-            parse_referents(await request_referents_async(self.annotation_ids))
-        )
+        for smaller_annotation_list in [self.annotation_ids[i:i + 20] for i in
+                                        range(0, len(self.annotation_ids), 20)]:
+            self._put_annotations(
+                parse_referents(
+                    await request_referents_async(smaller_annotation_list))
+            )
 
     @classmethod
     def from_api_response(cls, api_response: str):
