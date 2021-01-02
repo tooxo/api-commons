@@ -81,6 +81,8 @@ class Artist:
     slug: str
     url: str
     id: int
+    instagram_name: Optional[str] = None
+    twitter_name: Optional[str] = None
 
     @classmethod
     def from_api_response(cls, raw_api_response: str):
