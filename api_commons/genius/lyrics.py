@@ -24,6 +24,7 @@ class Lyrics:
     lyrics_owner_id: int
     lyrics_state: str
     lyrics_updated_at: int
+    updated_by_human_at: int
     path: str
     song_art_image_url: str
     stats: "genius.Stats"
