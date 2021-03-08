@@ -173,7 +173,7 @@ class TestSpotifyPlaylist(unittest.TestCase):
             "=gUkqHK2nQi-gSChD8sEygQ"
         )
         self.assertEqual(len(playlist.tracks), 50)
-        self.assertEqual(playlist.name, "Global Top 50")
+        self.assertEqual(playlist.name, "Top 50 - Global")
 
     def test_playlist_extract_async(self):
         playlist: spotify.Playlist = asyncio.run(
@@ -183,7 +183,7 @@ class TestSpotifyPlaylist(unittest.TestCase):
             )
         )
         self.assertEqual(len(playlist.tracks), 50)
-        self.assertEqual(playlist.name, "Global Top 50")
+        self.assertEqual(playlist.name, "Top 50 - Global")
 
     def test_long_playlist_extract(self):
         playlist: spotify.Playlist = spotifyApi.extract_playlist(
