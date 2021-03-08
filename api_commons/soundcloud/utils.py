@@ -8,21 +8,24 @@ from api_commons.common.web import get_request_sync, get_request_async
 import urllib.parse
 
 SCRIPT_REGEX = re.compile(
-    r"(https://a-v2\.sndcdn\.com/assets/\d\d?-[\da-z]{8}-[\da-z].js)"
+    r"(https://a-v2\.sndcdn\.com/assets/\d{1,4}-[\da-z]+\.js)"
 )
 
-ID_REGEX = re.compile(r'client_id:"([a-zA-Z0-9]+)"')
+ID_REGEX = [
+    re.compile(r'client_id:"([a-zA-Z0-9]+)"'),
+    re.compile(r'client_id=([A-z0-9]+)&device_id')
+]
 
 URL_RESOLVE = "https://api.soundcloud.com/resolve?url={}&client_id={}"
 
 COMMON_HEADERS = {
     "Host": "api-v2.soundcloud.com",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/70.0.3538.27 Safari/537.36",
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/70.0.3538.27 Safari/537.36",
     "Accept-Charset": "utf-8",
     "Accept": "text/html,application/xhtml+xml,application/"
-    "xml;q=0.9,*/*;q=0.8",
+              "xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-us,en;q=0.5",
     "Connection": "close",
 }
@@ -39,9 +42,10 @@ def extract_scripts_from_main_page(html: str) -> List[str]:
 
 
 def extract_token_from_script(js: str) -> Optional[str]:
-    results = re.findall(ID_REGEX, js)
-    if results:
-        return results[0]
+    for pattern in ID_REGEX:
+        results = re.findall(pattern, js)
+        if results:
+            return results[0]
     return None
 
 
