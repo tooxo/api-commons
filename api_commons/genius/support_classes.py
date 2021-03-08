@@ -105,6 +105,12 @@ class Lyric:
     link: Optional[str] = None
 
     @property
+    def is_dummy(self):
+        return self.text == '' and self._referenced_urls is None and \
+               self.annotation_id is None and self.annotation is None and \
+               self.link is None
+
+    @property
     def referenced_urls(self):
         return self._referenced_urls or []
 
@@ -124,13 +130,14 @@ class Lyric:
     @classmethod
     def from_api_response(cls, raw_api_response: str) -> "genius.Lyric":
         if not raw_api_response.startswith("{"):
-            return cls(json.loads(raw_api_response).strip())
+            return cls(json.loads(raw_api_response))
         parsed_api_response: dict = json.loads(raw_api_response)
-        lnk = None
+        lnk: Optional[str] = None
         if parsed_api_response["tag"] == "a":
             lnk = parsed_api_response["attributes"]["href"]
+
         return cls(
-            text=extract_text(parsed_api_response).strip(),
+            text=extract_text(parsed_api_response),
             annotation_id=parsed_api_response["data"].get("id", None)
             if "data" in parsed_api_response
             else None,
@@ -156,10 +163,15 @@ class Line:
     @classmethod
     def from_api_response(cls, raw_api_response: str) -> "Line":
         return cls(
-            [
-                Lyric.from_api_response(json.dumps(x))
-                for x in json.loads(raw_api_response)
-            ]
+            list(
+                filter(
+                    lambda x: not x.is_dummy,
+                    [
+                        Lyric.from_api_response(json.dumps(x))
+                        for x in json.loads(raw_api_response)
+                    ]
+                )
+            )
         )
 
 
@@ -177,7 +189,15 @@ class LyricsBlock:
         raw_lines = []
         temp = []
         for part in parsed_api_response:
-            if part == "\n":
+            if part == "\n" or (
+                (
+                    part.get("tag", None)
+                    if isinstance(part, dict)
+                    else None
+                ) in ["h1", "h2", "h3", "h4"]
+            ):
+                if isinstance(part, dict):
+                    temp.append(part)
                 raw_lines.append(temp)
                 temp = []
                 continue
