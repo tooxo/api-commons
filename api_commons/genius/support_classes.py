@@ -43,6 +43,7 @@ class Album:
     name_with_artist: str
     url: str
     artist: "genius.Artist"
+    release_date: str = None
     tracks: Optional[List["genius.Lyrics"]] = None
 
     def get_tracks(self) -> List["genius.Lyrics"]:
@@ -61,6 +62,9 @@ class Album:
         parsed_api_response["artist"] = Artist.from_api_response(
             json.dumps(parsed_api_response["artist"])
         )
+        if parsed_api_response.get("release_date_components", None) is not None:
+            if None in parsed_api_response["release_date_components"].values():
+                parsed_api_response["release_date"] = None
         return cls(
             **{
                 k: v
