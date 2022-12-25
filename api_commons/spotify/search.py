@@ -23,7 +23,7 @@ BASE_URL = "https://api.spotify.com/v1/search?q={}&type={}&limit={}"
 
 
 def _parse_search_response(
-    search_response: dict, search_type: Type[SearchType]
+        search_response: dict, search_type: Type[SearchType]
 ):
     if search_type == SearchType.ALBUM:
         return [
@@ -48,10 +48,10 @@ def _parse_search_response(
 
 
 def search(
-    search_term: str,
-    token: str,
-    search_result_count: int = 5,
-    search_type: Type[SearchType] = SearchType.TRACK,
+        search_term: str,
+        token: str,
+        search_result_count: int = 5,
+        search_type: Type[SearchType] = SearchType.TRACK,
 ) -> List[
     typing.Union[
         "spotify.Album", "spotify.Artist", "spotify.Playlist", "spotify.Track",
@@ -74,10 +74,10 @@ def search(
 
 @has_aiohttp
 async def search_async(
-    search_term: str,
-    token: str,
-    search_result_count: int,
-    search_type: Type[SearchType] = SearchType.TRACK,
+        search_term: str,
+        token: str,
+        search_result_count: int,
+        search_type: Type[SearchType] = SearchType.TRACK,
 ) -> List["spotify.Track"]:
     if search_type in [SearchType.SHOW, SearchType.EPISODE]:
         raise NotImplemented

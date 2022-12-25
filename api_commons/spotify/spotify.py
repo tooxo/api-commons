@@ -31,6 +31,7 @@ class SpotifyApi:
             },
         )
         self._token = json.loads(token_data)["access_token"]
+        self._token_timer = time.time()
         return self._token
 
     @has_aiohttp
@@ -49,6 +50,7 @@ class SpotifyApi:
             },
         )
         self._token = json.loads(token_data)["access_token"]
+        self._token_timer = time.time()
         return self._token
 
     @spotify.validation.decorator(spotify.validation.validate_spotify_track)
