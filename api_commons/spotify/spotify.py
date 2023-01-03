@@ -1,6 +1,9 @@
 import base64
 import json
 import time
+from typing import List, Type
+
+from api_commons.spotify.search import SearchType
 
 import api_commons.spotify as spotify
 import api_commons.spotify.validation
@@ -53,8 +56,29 @@ class SpotifyApi:
         self._token_timer = time.time()
         return self._token
 
-    search = spotify.search
-    search_async = spotify.search_async
+    def search(
+            self,
+            search_term: str,
+            search_result_count: int = 5,
+            search_result_offset: int = 0,
+            search_type: List[Type[SearchType]] = None,
+            include_external: bool = True
+    ):
+        return spotify.search(search_term, self.get_auth_token(), search_result_count, search_result_offset,
+                              search_type, include_external)
+
+    @has_aiohttp
+    async def search_async(
+            self,
+            search_term: str,
+            search_result_count: int = 5,
+            search_result_offset: int = 0,
+            search_type: List[Type[SearchType]] = None,
+            include_external: bool = True,
+    ):
+        return await spotify.search_async(search_term, self.get_auth_token_async(), search_result_count,
+                                          search_result_offset,
+                                          search_type, include_external)
 
     @spotify.validation.decorator(spotify.validation.validate_spotify_track)
     def extract_track(self, url: str) -> "spotify.Track":
