@@ -103,7 +103,7 @@ async def search_async(
         search_result_offset: int = 0,
         search_type: List[Type[SearchType]] = None,
         include_external: bool = True
-) -> List[typing.Union[spotify.Album, spotify.Track, spotify.Artist, spotify.Playlist]]:
+) -> List[typing.Union["spotify.Album", "spotify.Track", "spotify.Artist", "spotify.Playlist"]]:
     if search_type is None:
         search_type = [SearchType.TRACK]
 
