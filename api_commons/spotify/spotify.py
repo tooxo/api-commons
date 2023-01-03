@@ -53,6 +53,9 @@ class SpotifyApi:
         self._token_timer = time.time()
         return self._token
 
+    search = spotify.search
+    search_async = spotify.search_async
+
     @spotify.validation.decorator(spotify.validation.validate_spotify_track)
     def extract_track(self, url: str) -> "spotify.Track":
         return spotify.Track.from_id(extract_id(url=url), self.get_auth_token())
